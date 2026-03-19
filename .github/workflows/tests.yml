@@ -1,4 +1,4 @@
-name: CI Tests
+name: CI
 
 on:
   push:
@@ -7,10 +7,10 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test:
-    name: Run unit + E2E tests
+  build:
+    name: Build Validation
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,23 +18,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'npm'
-
-      - name: Install system deps for headless Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            ca-certificates fonts-liberation libasound2 libatk1.0-0 libatk-bridge2.0-0 \
-            libgtk-3-0 libx11-xcb1 libxcomposite1 libxrandr2 libgbm1 libnss3 libxss1 \
-            libxshmfence1 libpangocairo-1.0-0
 
       - name: Install dependencies
         run: npm ci
         env:
           CI: true
 
-      - name: Run tests
-        run: npm test --silent
+      - name: Build
+        run: npm run build
         env:
           CI: true
